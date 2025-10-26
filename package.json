@@ -1,13 +1,11 @@
 {
-  "name": "iran-bank-detector",
+  "name": "iranbanks",
   "version": "1.0.0",
   "description": "Detect Iranian banks from card numbers - Fast, lightweight, and reliable BIN lookup for Iranian banking system",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "test": "jest",
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "test": "node test.js"
   },
   "keywords": [
     "iran",

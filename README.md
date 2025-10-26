@@ -1,6 +1,6 @@
 # Iran Bank Detector 🏦
 
-[![npm version](https://badge.fury.io/js/iran-bank-detector.svg)](https://badge.fury.io/js/iran-bank-detector)
+[![npm version](https://badge.fury.io/js/iranbanks.svg)](https://badge.fury.io/js/iranbanks)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Detect Iranian banks from card numbers - تشخیص بانک‌های ایران از روی شماره کارت
@@ -10,7 +10,7 @@ A lightweight, fast, and reliable npm package to identify Iranian banks from car
 ## Installation
 
 ```bash
-npm install iran-bank-detector
+npm install iranbanks
 ```
 
 ## Usage
@@ -22,7 +22,7 @@ const {
   detectBank,
   isValidIranianCard,
   getSupportedBanks,
-} = require("iran-bank-detector");
+} = require("iranbanks");
 
 // Detect bank from card number
 const result = detectBank("6037991234567890");
@@ -52,7 +52,7 @@ import {
   detectBank,
   isValidIranianCard,
   DetectionResult,
-} from "iran-bank-detector";
+} from "iranbanks";
 
 const result: DetectionResult = detectBank("6037991234567890");
 
@@ -141,7 +141,7 @@ Array<{
 
 ```jsx
 import React, { useState } from "react";
-import { detectBank } from "iran-bank-detector";
+import { detectBank } from "iranbanks";
 
 function BankDetector() {
   const [cardNumber, setCardNumber] = useState("");
@@ -184,7 +184,7 @@ function BankDetector() {
 
 ```javascript
 const express = require("express");
-const { detectBank } = require("iran-bank-detector");
+const { detectBank } = require("iranbanks");
 
 const app = express();
 app.use(express.json());
@@ -220,7 +220,7 @@ app.listen(3000);
 </template>
 
 <script>
-import { detectBank } from "iran-bank-detector";
+import { detectBank } from "iranbanks";
 
 export default {
   data() {
