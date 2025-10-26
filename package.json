@@ -1,0 +1,45 @@
+{
+  "name": "iran-bank-detector",
+  "version": "1.0.0",
+  "description": "Detect Iranian banks from card numbers - Fast, lightweight, and reliable BIN lookup for Iranian banking system",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "iran",
+    "iranian",
+    "bank",
+    "card",
+    "detection",
+    "bin",
+    "lookup",
+    "persian",
+    "farsi",
+    "financial",
+    "payment",
+    "validation",
+    "بانک",
+    "کارت",
+    "ایران"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/iran-bank-detector.git"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "jest": "^29.5.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ]
+}
