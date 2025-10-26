@@ -26,11 +26,11 @@
     "کارت",
     "ایران"
   ],
-  "author": "Your Name",
+  "author": "Masoud Vafaei",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/iran-bank-detector.git"
+    "url": "https://github.com/masoudv/iranbanks.git"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
