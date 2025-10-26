@@ -1,6 +1,6 @@
 {
   "name": "iranbanks",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Detect Iranian banks from card numbers - Fast, lightweight, and reliable BIN lookup for Iranian banking system",
   "main": "index.js",
   "types": "index.d.ts",
