@@ -48,11 +48,7 @@ console.log(banks);
 ### TypeScript
 
 ```typescript
-import {
-  detectBank,
-  isValidIranianCard,
-  DetectionResult,
-} from "iranbanks";
+import { detectBank, isValidIranianCard, DetectionResult } from "iranbanks";
 
 const result: DetectionResult = detectBank("6037991234567890");
 
