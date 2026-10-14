@@ -1,7 +1,11 @@
 # Iran Bank Detector 🏦
 
-[![npm version](https://badge.fury.io/js/iranbanks.svg)](https://badge.fury.io/js/iranbanks)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://img.shields.io/npm/v/iranbanks?logo=npm&color=cb3837)](https://www.npmjs.com/package/iranbanks)
+[![npm downloads](https://img.shields.io/npm/dm/iranbanks?color=blue)](https://www.npmjs.com/package/iranbanks)
+[![install size](https://img.shields.io/npm/unpacked-size/iranbanks?label=size)](https://www.npmjs.com/package/iranbanks)
+[![types](https://img.shields.io/npm/types/iranbanks)](https://www.npmjs.com/package/iranbanks)
+[![node](https://img.shields.io/node/v/iranbanks)](https://www.npmjs.com/package/iranbanks)
+[![License: MIT](https://img.shields.io/npm/l/iranbanks?color=yellow)](https://opensource.org/licenses/MIT)
 
 Detect Iranian banks from card numbers - تشخیص بانک‌های ایران از روی شماره کارت
 
