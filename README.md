@@ -74,7 +74,7 @@ Detects the bank from a card number using BIN codes.
 
 **Parameters:**
 
-- `cardNumber`: Card number (16 digits)
+- `cardNumber`: Card number (at least the first 6 digits). Pass it as a **string**: JS numbers above 2^53 have already lost digits, so such numbers are rejected.
 
 **Returns:** `{ success, bank?, message?, bin? }` where `bank` is `{ code, name, nameEn, shebaCode, status, mergedInto?, icon, bin, cardNumber }`.
 
@@ -111,7 +111,7 @@ Returns one bank by its code (e.g. `"melli"`) or `null`.
 
 ### `getBankIcon(code)`
 
-Returns the absolute path of the bank's SVG icon (`icons/<variant>/<code>.svg`), or `null`. `variant` is `"color"` (default) or `"mono"`.
+Returns the location of the bank's SVG icon, or `null`. `variant` is `"color"` (default) or `"mono"`. In Node this is an absolute file path; in the browser entry it is a package subpath (see [Browser usage](#browser-usage)).
 
 ```javascript
 const { getBankIcon, detectBank } = require("iranbanks");
@@ -121,7 +121,20 @@ getBankIcon("melli", "mono");   // …/icons/mono/melli.svg
 detectBank(card).bank.icon;     // { color: "…", mono: "…" }
 ```
 
-With a bundler you can import the files directly: `import melli from "iranbanks/icons/color/melli.svg"`.
+The icon files themselves live at `iranbanks/icons/<variant>/<code>.svg`.
+
+## Browser usage
+
+The package ships a browser-safe entry (no `fs`/`path`). Bundlers that honor the `"browser"` export condition (Vite, webpack 5, esbuild, Rollup) pick it automatically:
+
+```javascript
+import { detectBank } from "iranbanks";
+import melliIcon from "iranbanks/icons/color/melli.svg"; // let the bundler emit the file
+```
+
+You can also import it explicitly with `import { detectBank } from "iranbanks/browser"`. In this entry `bank.icon` holds package subpaths such as `"iranbanks/icons/color/melli.svg"`: these are import specifiers, not URLs, so import the SVGs statically.
+
+The raw data is available as `import { BANKS } from "iranbanks/banks"` (frozen, read-only).
 
 ## Supported Banks (37)
 

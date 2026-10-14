@@ -1,6 +1,6 @@
 {
   "name": "iranbanks",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Detect Iranian banks from card numbers - Fast, lightweight, and reliable BIN lookup for Iranian banking system",
   "main": "index.js",
   "types": "index.d.ts",
@@ -40,9 +40,50 @@
   },
   "files": [
     "index.js",
-    "index.d.ts",
+    "browser.js",
+    "core.js",
     "banks.js",
+    "index.d.ts",
+    "banks.d.ts",
     "icons/",
     "README.md"
-  ]
+  ],
+  "browser": "browser.js",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "browser": "./browser.js",
+      "default": "./index.js"
+    },
+    "./browser": {
+      "types": "./index.d.ts",
+      "default": "./browser.js"
+    },
+    "./browser.js": {
+      "types": "./index.d.ts",
+      "default": "./browser.js"
+    },
+    "./index": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./index.js": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./banks": {
+      "types": "./banks.d.ts",
+      "default": "./banks.js"
+    },
+    "./banks.js": {
+      "types": "./banks.d.ts",
+      "default": "./banks.js"
+    },
+    "./icons/*": "./icons/*",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=14"
+  }
 }

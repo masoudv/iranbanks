@@ -1,8 +1,8 @@
 /**
- * Iranian banks data / داده بانک‌های ایران
+ * Iranian banks data
  *
  * Fields:
- *  - code:       stable English slug, also the icon file name (icons/<code>.svg)
+ *  - code:       stable English slug, also the icon file name (icons/<variant>/<code>.svg)
  *  - name:       Persian name
  *  - nameEn:     English name
  *  - bins:       6-digit card prefixes (Shetab BIN)
@@ -11,17 +11,18 @@
  *  - mergedInto: code of the acquiring bank (only when status is "merged")
  */
 
-const bank = (code, name, nameEn, bins, shebaCode, extra = {}) => ({
-  code,
-  name,
-  nameEn,
-  bins,
-  shebaCode,
-  status: extra.mergedInto ? "merged" : "active",
-  ...(extra.mergedInto && { mergedInto: extra.mergedInto }),
-});
+const bank = (code, name, nameEn, bins, shebaCode, extra = {}) =>
+  Object.freeze({
+    code,
+    name,
+    nameEn,
+    bins: Object.freeze(bins),
+    shebaCode,
+    status: extra.mergedInto ? "merged" : "active",
+    ...(extra.mergedInto && { mergedInto: extra.mergedInto }),
+  });
 
-const BANKS = [
+const BANKS = Object.freeze([
   bank("markazi", "بانک مرکزی", "Central Bank of Iran", ["636795", "636797"], "010"),
   bank("melli", "بانک ملی", "Bank Melli Iran", ["603799", "170019"], "017"),
   bank("sepah", "بانک سپه", "Bank Sepah", ["589210"], "015"),
@@ -61,6 +62,6 @@ const BANKS = [
   bank("mehr-eghtesad", "بانک مهر اقتصاد", "Mehr Eghtesad Bank", ["639370"], "079", { mergedInto: "sepah" }),
   bank("kosar", "موسسه اعتباری کوثر", "Kosar Credit Institution", ["505801"], "073", { mergedInto: "sepah" }),
   bank("noor", "موسسه اعتباری نور", "Noor Credit Institution", ["507677"], "080", { mergedInto: "melli" }),
-];
+]);
 
 module.exports = { BANKS };

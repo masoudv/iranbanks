@@ -118,3 +118,105 @@ test("every bank has a color and a mono SVG icon", () => {
   }
   assert.equal(detectBank("6037991234567890").bank.icon.color, getBankIcon("melli"));
 });
+
+test("browser entry loads without Node built-ins", () => {
+  const { execFileSync } = require("node:child_process");
+  const script = `
+    const Module = require("module");
+    const load = Module._load;
+    Module._load = function (request, ...rest) {
+      if (/^(node:)?(fs|path|os|child_process)$/.test(request)) {
+        throw new Error("browser entry required " + request);
+      }
+      return load.call(this, request, ...rest);
+    };
+    const api = require("./browser");
+    process.stdout.write(api.detectBank("6037991234567890").bank.icon.color);
+  `;
+  const out = execFileSync(process.execPath, ["-e", script], {
+    cwd: __dirname,
+    encoding: "utf8",
+  });
+  assert.equal(out, "iranbanks/icons/color/melli.svg");
+});
+
+test("browser and node entries expose the same API and data", () => {
+  const browser = require("./browser");
+  assert.deepEqual(Object.keys(browser).sort(), Object.keys(require("./index")).sort());
+  assert.deepEqual(browser.IRANIAN_BANKS, IRANIAN_BANKS);
+  assert.deepEqual(
+    browser.getBanks().map(({ icon, ...b }) => b),
+    getBanks().map(({ icon, ...b }) => b)
+  );
+  // every icon the browser entry advertises is a real file in the package
+  for (const b of browser.getBanks()) {
+    for (const location of Object.values(b.icon)) {
+      assert.doesNotThrow(() => require.resolve(location), location);
+    }
+  }
+});
+
+test('package "exports" resolve to existing files', () => {
+  for (const id of [
+    "iranbanks",
+    "iranbanks/browser",
+    "iranbanks/banks",
+    "iranbanks/banks.js",
+    "iranbanks/icons/mono/noor.svg",
+    "iranbanks/package.json",
+  ]) {
+    assert.doesNotThrow(() => require.resolve(id), id);
+  }
+  assert.equal(require("iranbanks/banks").BANKS.length, 37);
+});
+
+test("bank data is immutable", () => {
+  const { BANKS } = require("./banks");
+  assert.ok(Object.isFrozen(BANKS));
+  assert.ok(Object.isFrozen(BANKS[0]));
+  assert.ok(Object.isFrozen(BANKS[0].bins));
+  // results handed to callers are copies: mutating one must not leak
+  const a = getBankByCode("melli");
+  a.bins.push("000000");
+  assert.equal(getBankByCode("melli").bins.length, 2);
+});
+
+test("named ESM imports work for every entry", () => {
+  const { execFileSync } = require("node:child_process");
+  const names = Object.keys(require("./index"));
+  for (const entry of ["iranbanks", "iranbanks/browser"]) {
+    const script = `import { ${names.join(", ")} } from "${entry}";
+      process.stdout.write(detectBank("6037991234567890").bank.code);`;
+    const out = execFileSync(
+      process.execPath,
+      ["--input-type=module", "-e", script],
+      { cwd: __dirname, encoding: "utf8" }
+    );
+    assert.equal(out, "melli", entry);
+  }
+});
+
+test("icon lookups are cached", () => {
+  const fs = require("node:fs");
+  const original = fs.existsSync;
+  let calls = 0;
+  fs.existsSync = (...args) => (calls++, original(...args));
+  try {
+    getBankIcon("sepah", "mono");
+    const first = calls;
+    getBankIcon("sepah", "mono");
+    getBanks();
+    getBanks();
+    assert.ok(first <= 1);
+    assert.ok(calls <= first + 74, "getBanks should hit the disk once per icon");
+  } finally {
+    fs.existsSync = original;
+  }
+});
+
+test("numbers that already lost precision are rejected", () => {
+  assert.throws(() => detectBank(9919751234567890), /string/);
+  assert.equal(isValidIranianCard(9919751234567890), false);
+  assert.equal(detectBank(6037991234567890).bank.code, "melli");
+  assert.equal(detectBank("9919751234567890").bank.code, "mellat");
+});

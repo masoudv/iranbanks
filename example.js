@@ -91,4 +91,16 @@ invalidInputs.forEach((input, index) => {
   }
 });
 
+console.log('\n' + '='.repeat(50) + '\n');
+
+// Example 6: Bank details and icons
+console.log('📋 Example 6: Bank Details and Icons');
+const { getBanks, getBankByCode, getBankIcon } = require('./index');
+
+const melli = getBankByCode('melli');
+console.log(`${melli.name} / ${melli.nameEn} (sheba code ${melli.shebaCode})`);
+console.log('Color icon:', getBankIcon('melli'));
+console.log('Mono icon: ', getBankIcon('melli', 'mono'));
+console.log(`Merged banks: ${getBanks({ status: 'merged' }).map((b) => b.code).join(', ')}`);
+
 console.log('\n🎉 All examples completed!');
