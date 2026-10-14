@@ -1,3 +1,10 @@
+export type IconVariant = "color" | "mono";
+
+export interface BankIcons {
+  color?: string;
+  mono?: string;
+}
+
 export type BankStatus = "active" | "merged";
 
 export interface Bank {
@@ -14,8 +21,8 @@ export interface Bank {
   status: BankStatus;
   /** Code of the acquiring bank (only when status is "merged") */
   mergedInto?: string;
-  /** Absolute path of the SVG icon, or null if there is none yet */
-  icon: string | null;
+  /** Absolute paths of the SVG icons, or null if there are none */
+  icon: BankIcons | null;
 }
 
 export interface BankInfo extends Omit<Bank, "bins"> {
@@ -63,9 +70,9 @@ export function getBanks(options?: { status?: BankStatus }): Bank[];
 export function getBankByCode(code: string): Bank | null;
 
 /**
- * مسیر مطلق آیکون SVG بانک؛ در صورت نبودن آیکون null
+ * مسیر مطلق آیکون SVG بانک (نسخه رنگی یا تک‌رنگ)؛ در صورت نبودن آیکون null
  */
-export function getBankIcon(code: string): string | null;
+export function getBankIcon(code: string, variant?: IconVariant): string | null;
 
 /**
  * نگاشت BIN به نام فارسی بانک

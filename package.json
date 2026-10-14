@@ -5,7 +5,8 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "test": "node --test test.js"
+    "test": "node --test test.js",
+    "icons:import": "node scripts/import-icons.js"
   },
   "keywords": [
     "iran",
@@ -34,7 +35,9 @@
     "type": "git",
     "url": "https://github.com/masoudv/iranbanks.git"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "svgo": "^3.3.5"
+  },
   "files": [
     "index.js",
     "index.d.ts",

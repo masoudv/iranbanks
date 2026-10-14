@@ -103,4 +103,18 @@ test("lookup helpers", () => {
   assert.equal(getBankByCode("melli").name, "بانک ملی");
   assert.equal(getBankByCode("nope"), null);
   assert.equal(getBankIcon("nope"), null);
+  assert.equal(getBankIcon("melli", "bogus"), null);
+});
+
+test("every bank has a color and a mono SVG icon", () => {
+  const fs = require("node:fs");
+  for (const b of getBanks()) {
+    for (const variant of ["color", "mono"]) {
+      const file = getBankIcon(b.code, variant);
+      assert.ok(file, `missing ${variant} icon for ${b.code}`);
+      assert.match(fs.readFileSync(file, "utf8"), /<svg[\s>]/, file);
+    }
+    assert.deepEqual(Object.keys(b.icon), ["color", "mono"], b.code);
+  }
+  assert.equal(detectBank("6037991234567890").bank.icon.color, getBankIcon("melli"));
 });

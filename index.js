@@ -25,19 +25,31 @@ const IRANIAN_BANKS = Object.fromEntries(
   [...BANKS_BY_BIN].map(([bin, b]) => [bin, b.name])
 );
 
+const ICON_VARIANTS = ["color", "mono"];
+
 /**
  * مسیر مطلق فایل آیکون SVG بانک؛ اگر آیکون موجود نباشد null
  * @param {string} code - کد بانک (مثلا "melli")
+ * @param {"color"|"mono"} [variant="color"] - نسخه رنگی یا تک‌رنگ
  * @returns {string|null}
  */
-function getBankIcon(code) {
-  if (!BANKS_BY_CODE.has(code)) return null;
-  const file = path.join(ICONS_DIR, `${code}.svg`);
+function getBankIcon(code, variant = "color") {
+  if (!BANKS_BY_CODE.has(code) || !ICON_VARIANTS.includes(variant)) return null;
+  const file = path.join(ICONS_DIR, variant, `${code}.svg`);
   return fs.existsSync(file) ? file : null;
 }
 
+function getIcons(code) {
+  const icons = {};
+  for (const variant of ICON_VARIANTS) {
+    const file = getBankIcon(code, variant);
+    if (file) icons[variant] = file;
+  }
+  return Object.keys(icons).length ? icons : null;
+}
+
 function toPublicBank(b) {
-  return { ...b, bins: [...b.bins], icon: getBankIcon(b.code) };
+  return { ...b, bins: [...b.bins], icon: getIcons(b.code) };
 }
 
 /**

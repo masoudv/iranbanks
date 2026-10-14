@@ -35,7 +35,7 @@ console.log(result);
 //     nameEn: 'Bank Melli Iran',
 //     shebaCode: '017',
 //     status: 'active',
-//     icon: null,            // absolute path of the SVG when available
+//     icon: { color: '…/icons/color/melli.svg', mono: '…/icons/mono/melli.svg' },
 //     bin: '603799',
 //     cardNumber: '6037991234567890'
 //   }
@@ -99,7 +99,7 @@ Array<{
 
 ### `getBanks(options?)`
 
-Returns every bank (one row per bank) with `code`, `name`, `nameEn`, `bins`, `shebaCode`, `status`, `mergedInto?` and `icon`. Pass `{ status: "active" | "merged" }` to filter.
+Returns every bank (one row per bank) with `code`, `name`, `nameEn`, `bins`, `shebaCode`, `status`, `mergedInto?` and `icon` (paths of the SVG icons). Pass `{ status: "active" | "merged" }` to filter.
 
 ### `getBankByCode(code)`
 
@@ -107,7 +107,17 @@ Returns one bank by its code (e.g. `"melli"`) or `null`.
 
 ### `getBankIcon(code)`
 
-Returns the absolute path of the bank's SVG icon (`icons/<code>.svg`), or `null` if there is no icon yet.
+Returns the absolute path of the bank's SVG icon (`icons/<variant>/<code>.svg`), or `null`. `variant` is `"color"` (default) or `"mono"`.
+
+```javascript
+const { getBankIcon, detectBank } = require("iranbanks");
+
+getBankIcon("melli");           // …/icons/color/melli.svg
+getBankIcon("melli", "mono");   // …/icons/mono/melli.svg
+detectBank(card).bank.icon;     // { color: "…", mono: "…" }
+```
+
+With a bundler you can import the files directly: `import melli from "iranbanks/icons/color/melli.svg"`.
 
 ## Supported Banks (37)
 
@@ -306,3 +316,9 @@ Made with ❤️ for the Iranian developer community
 - `627039`, `627593` and `627884` were wrong and are removed (`627884` is Parsian).
 - `505785` is **Iran Zamin** (was labelled Iran-Venezuela).
 - Many new banks and BINs were added; duplicates were removed.
+
+## Icons
+
+All 37 banks ship with a full-color SVG (`icons/color`) and a monochrome one (`icons/mono`, solid white — meant for dark backgrounds; recolor it with CSS `filter` or a `mask`). Both are optimized with SVGO. Logos come from [zegond/logos-per-banks](https://github.com/zegond/logos-per-banks) (CC0 1.0). Bank logos remain trademarks of their respective owners.
+
+To refresh them: `node scripts/import-icons.js "<path>/SVG Assets/Bank"`.
