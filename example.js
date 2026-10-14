@@ -6,8 +6,8 @@ console.log('🏦 Iran Bank Detector Usage Examples\n');
 console.log('📋 Example 1: Different Bank Detection');
 const testCards = [
   '6037991234567890', // Bank Melli
-  '6037701234567890', // Bank Saderat
-  '6037691234567890', // Bank Keshavarzi
+  '6037691234567890', // Bank Saderat
+  '6037701234567890', // Bank Keshavarzi
   '5892101234567890', // Bank Sepah
   '6104331234567890', // Bank Mellat
 ];

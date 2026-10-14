@@ -3,83 +3,85 @@
  * Detect Iranian banks from card numbers
  */
 
-const IRANIAN_BANKS = {
-  '603799': 'بانک ملی',
-  '603770': 'بانک صادرات',
-  '603769': 'بانک کشاورزی',
-  '589210': 'بانک سپه',
-  '610433': 'بانک ملت',
-  '628023': 'بانک مسکن',
-  '627648': 'بانک توسعه صادرات',
-  '627961': 'بانک صنعت و معدن',
-  '627353': 'بانک تجارت',
-  '589463': 'بانک رفاه',
-  '639347': 'بانک پاسارگاد',
-  '627412': 'بانک اقتصاد نوین',
-  '622106': 'بانک پارسیان',
-  '627488': 'بانک کارآفرین',
-  '621986': 'بانک سامان',
-  '639346': 'بانک سینا',
-  '639607': 'بانک سرمایه',
-  '502806': 'بانک شهر',
-  '502938': 'بانک دی',
-  '627381': 'بانک انصار',
-  '639599': 'بانک قوامین',
-  '627760': 'پست بانک ایران',
-  '627593': 'بانک ایران زمین',
-  '627039': 'بانک حکمت ایرانیان',
-  '627381': 'بانک انصار',
-  '505785': 'بانک ایران و ونزوئلا',
-  '627412': 'بانک اقتصاد نوین',
-  '622106': 'بانک پارسیان',
-  '627884': 'بانک کرسان',
-  '606373': 'بانک مهر ایران',
-  '627593': 'بانک ایران زمین',
-  '627648': 'بانک توسعه صادرات ایران',
-  '627412': 'بانک اقتصاد نوین'
-};
+const fs = require("fs");
+const path = require("path");
+const { BANKS } = require("./banks");
+
+const ICONS_DIR = path.join(__dirname, "icons");
+
+const BANKS_BY_CODE = new Map(BANKS.map((b) => [b.code, b]));
+
+const BANKS_BY_BIN = new Map();
+for (const b of BANKS) {
+  for (const bin of b.bins) {
+    BANKS_BY_BIN.set(bin, b);
+  }
+}
+
+/**
+ * نگاشت BIN به نام فارسی بانک (سازگار با نسخه ۱)
+ */
+const IRANIAN_BANKS = Object.fromEntries(
+  [...BANKS_BY_BIN].map(([bin, b]) => [bin, b.name])
+);
+
+/**
+ * مسیر مطلق فایل آیکون SVG بانک؛ اگر آیکون موجود نباشد null
+ * @param {string} code - کد بانک (مثلا "melli")
+ * @returns {string|null}
+ */
+function getBankIcon(code) {
+  if (!BANKS_BY_CODE.has(code)) return null;
+  const file = path.join(ICONS_DIR, `${code}.svg`);
+  return fs.existsSync(file) ? file : null;
+}
+
+function toPublicBank(b) {
+  return { ...b, bins: [...b.bins], icon: getBankIcon(b.code) };
+}
 
 /**
  * تشخیص بانک از روی شماره کارت
  * @param {string} cardNumber - شماره کارت (16 رقمی)
- * @returns {object} اطلاعات بانک شامل نام فارسی و انگلیسی
+ * @returns {object} اطلاعات بانک
  */
 function detectBank(cardNumber) {
   if (!cardNumber) {
-    throw new Error('شماره کارت الزامی است');
+    throw new Error("شماره کارت الزامی است");
   }
 
   // حذف فاصله‌ها و کاراکترهای غیرضروری
-  const cleanCardNumber = cardNumber.toString().replace(/\s|-/g, '');
-  
+  const cleanCardNumber = cardNumber.toString().replace(/\s|-/g, "");
+
   if (cleanCardNumber.length < 6) {
-    throw new Error('شماره کارت باید حداقل 6 رقم باشد');
+    throw new Error("شماره کارت باید حداقل 6 رقم باشد");
   }
 
   if (!/^\d+$/.test(cleanCardNumber)) {
-    throw new Error('شماره کارت باید فقط شامل اعداد باشد');
+    throw new Error("شماره کارت باید فقط شامل اعداد باشد");
   }
 
   // استخراج 6 رقم اول (BIN)
   const bin = cleanCardNumber.slice(0, 6);
-  
-  const bankName = IRANIAN_BANKS[bin];
-  
-  if (bankName) {
+
+  const found = BANKS_BY_BIN.get(bin);
+
+  if (found) {
+    const { bins, ...info } = toPublicBank(found);
     return {
       success: true,
       bank: {
-        name: bankName,
+        ...info,
         bin: bin,
-        cardNumber: cleanCardNumber
-      }
+        cardNumber: cleanCardNumber,
+      },
     };
   }
 
   return {
     success: false,
-    message: 'بانک شناسایی نشد',
-    bin: bin
+    message: "بانک شناسایی نشد",
+    bin: bin,
   };
 }
 
@@ -89,11 +91,11 @@ function detectBank(cardNumber) {
  * @returns {boolean} معتبر بودن کارت
  */
 function isValidIranianCard(cardNumber) {
-  const cleanCardNumber = cardNumber.toString().replace(/\s|-/g, '');
-  
-  if (cleanCardNumber.length !== 16) {
+  if (cardNumber === null || cardNumber === undefined) {
     return false;
   }
+
+  const cleanCardNumber = cardNumber.toString().replace(/\s|-/g, "");
 
   if (!/^\d{16}$/.test(cleanCardNumber)) {
     return false;
@@ -102,38 +104,62 @@ function isValidIranianCard(cardNumber) {
   // بررسی الگوریتم Luhn
   let sum = 0;
   let alternate = false;
-  
+
   for (let i = cleanCardNumber.length - 1; i >= 0; i--) {
     let n = parseInt(cleanCardNumber.charAt(i), 10);
-    
+
     if (alternate) {
       n *= 2;
       if (n > 9) {
         n = (n % 10) + 1;
       }
     }
-    
+
     sum += n;
     alternate = !alternate;
   }
-  
-  return (sum % 10) === 0;
+
+  return sum % 10 === 0;
 }
 
 /**
- * دریافت لیست تمام بانک‌های پشتیبانی شده
- * @returns {object} لیست بانک‌ها
+ * دریافت لیست BINهای پشتیبانی شده (سازگار با نسخه ۱؛ یک ردیف برای هر BIN)
+ * @returns {Array<{bin: string, name: string}>}
  */
 function getSupportedBanks() {
   return Object.entries(IRANIAN_BANKS).map(([bin, name]) => ({
     bin,
-    name
+    name,
   }));
+}
+
+/**
+ * دریافت لیست کامل بانک‌ها (یک ردیف برای هر بانک)
+ * @param {{status?: "active"|"merged"}} [options]
+ * @returns {object[]}
+ */
+function getBanks(options = {}) {
+  return BANKS.filter((b) => !options.status || b.status === options.status).map(
+    toPublicBank
+  );
+}
+
+/**
+ * دریافت اطلاعات یک بانک با کد آن
+ * @param {string} code - مثلا "melli"
+ * @returns {object|null}
+ */
+function getBankByCode(code) {
+  const b = BANKS_BY_CODE.get(code);
+  return b ? toPublicBank(b) : null;
 }
 
 module.exports = {
   detectBank,
   isValidIranianCard,
   getSupportedBanks,
-  IRANIAN_BANKS
+  getBanks,
+  getBankByCode,
+  getBankIcon,
+  IRANIAN_BANKS,
 };

@@ -30,7 +30,12 @@ console.log(result);
 // {
 //   success: true,
 //   bank: {
+//     code: 'melli',
 //     name: 'بانک ملی',
+//     nameEn: 'Bank Melli Iran',
+//     shebaCode: '017',
+//     status: 'active',
+//     icon: null,            // absolute path of the SVG when available
 //     bin: '603799',
 //     cardNumber: '6037991234567890'
 //   }
@@ -67,20 +72,7 @@ Detects the bank from a card number using BIN codes.
 
 - `cardNumber`: Card number (16 digits)
 
-**Returns:**
-
-```typescript
-{
-  success: boolean;
-  bank?: {
-    name: string;      // Bank name (in Persian)
-    bin: string;       // First 6 digits of card
-    cardNumber: string; // Cleaned card number
-  };
-  message?: string;    // Error message if bank not detected
-  bin?: string;        // BIN code if bank not detected
-}
-```
+**Returns:** `{ success, bank?, message?, bin? }` where `bank` is `{ code, name, nameEn, shebaCode, status, mergedInto?, icon, bin, cardNumber }`.
 
 ### `isValidIranianCard(cardNumber: string)`
 
@@ -105,31 +97,61 @@ Array<{
 }>;
 ```
 
-## Supported Banks
+### `getBanks(options?)`
 
-- Bank Melli Iran (بانک ملی ایران)
-- Bank Saderat Iran (بانک صادرات ایران)
-- Bank Keshavarzi (بانک کشاورزی)
-- Bank Sepah (بانک سپه)
-- Bank Mellat (بانک ملت)
-- Bank Maskan (بانک مسکن)
-- Bank Tosee Saderat (بانک توسعه صادرات)
-- Bank Sanat va Madan (بانک صنعت و معدن)
-- Bank Tejarat (بانک تجارت)
-- Bank Refah Kargaran (بانک رفاه کارگران)
-- Bank Pasargad (بانک پاسارگاد)
-- Bank Eghtesad Novin (بانک اقتصاد نوین)
-- Bank Parsian (بانک پارسیان)
-- Bank Karafarin (بانک کارآفرین)
-- Bank Saman (بانک سامان)
-- Bank Sina (بانک سینا)
-- Bank Sarmayeh (بانک سرمایه)
-- Bank Shahr (بانک شهر)
-- Bank Day (بانک دی)
-- Bank Ansar (بانک انصار)
-- Bank Ghavamin (بانک قوامین)
-- Post Bank Iran (پست بانک ایران)
-- And more...
+Returns every bank (one row per bank) with `code`, `name`, `nameEn`, `bins`, `shebaCode`, `status`, `mergedInto?` and `icon`. Pass `{ status: "active" | "merged" }` to filter.
+
+### `getBankByCode(code)`
+
+Returns one bank by its code (e.g. `"melli"`) or `null`.
+
+### `getBankIcon(code)`
+
+Returns the absolute path of the bank's SVG icon (`icons/<code>.svg`), or `null` if there is no icon yet.
+
+## Supported Banks (37)
+
+| بانک | Name | Code | BIN | Sheba | Status |
+|---|---|---|---|---|---|
+| بانک مرکزی | Central Bank of Iran | `markazi` | `636795` `636797` | 010 | active |
+| بانک ملی | Bank Melli Iran | `melli` | `603799` `170019` | 017 | active |
+| بانک سپه | Bank Sepah | `sepah` | `589210` | 015 | active |
+| بانک صادرات | Bank Saderat Iran | `saderat` | `603769` `903769` | 019 | active |
+| بانک ملت | Bank Mellat | `mellat` | `610433` `991975` | 012 | active |
+| بانک تجارت | Tejarat Bank | `tejarat` | `627353` `585983` | 018 | active |
+| بانک مسکن | Bank Maskan | `maskan` | `628023` | 014 | active |
+| بانک کشاورزی | Agriculture Bank (Keshavarzi) | `keshavarzi` | `603770` `639217` | 016 | active |
+| بانک رفاه کارگران | Refah Bank | `refah` | `589463` | 013 | active |
+| پست بانک ایران | Post Bank of Iran | `post` | `627760` | 021 | active |
+| بانک توسعه تعاون | Cooperative Development Bank | `tosee-taavon` | `502908` | 022 | active |
+| بانک توسعه صادرات | Export Development Bank of Iran | `tosee-saderat` | `627648` `207177` | 020 | active |
+| بانک صنعت و معدن | Bank of Industry and Mine | `sanat-madan` | `627961` | 011 | active |
+| بانک قرض‌الحسنه مهر ایران | Mehr Iran Bank | `mehr-iran` | `606373` | 060 | active |
+| بانک قرض‌الحسنه رسالت | Resalat Bank | `resalat` | `504172` | 070 | active |
+| موسسه اعتباری توسعه | Tose'e Credit Institution | `tosee` | `628157` | 051 | active |
+| بانک پارسیان | Parsian Bank | `parsian` | `622106` `627884` `639194` | 054 | active |
+| بانک پاسارگاد | Bank Pasargad | `pasargad` | `502229` `639347` | 057 | active |
+| بانک سامان | Saman Bank | `saman` | `621986` | 056 | active |
+| بانک اقتصاد نوین | EN Bank (Eghtesad Novin) | `eghtesad-novin` | `627412` | 055 | active |
+| بانک آینده | Ayandeh Bank | `ayandeh` | `636214` | 062 | active |
+| بانک شهر | Shahr Bank | `shahr` | `502806` `504706` | 061 | active |
+| بانک دی | Day Bank | `day` | `502938` | 066 | active |
+| بانک سینا | Sina Bank | `sina` | `639346` | 059 | active |
+| بانک سرمایه | Sarmayeh Bank | `sarmayeh` | `639607` | 058 | active |
+| بانک گردشگری | Tourism Bank (Gardeshgari) | `gardeshgari` | `505416` `505426` | 064 | active |
+| بانک ایران زمین | Iran Zamin Bank | `iran-zamin` | `505785` | 069 | active |
+| بانک کارآفرین | Karafarin Bank | `karafarin` | `627488` `502910` | 053 | active |
+| بانک خاورمیانه | Middle East Bank | `khavarmiane` | `585947` | 078 | active |
+| بانک ملل | Melal Credit Institution | `melal` | `606256` | 075 | active |
+| بانک ایران و ونزوئلا | Iran-Venezuela Bilateral Bank | `iran-venezuela` | — | 095 | active |
+| بانک انصار | Ansar Bank | `ansar` | `627381` | 063 | merged → `sepah` |
+| بانک قوامین | Ghavamin Bank | `ghavamin` | `639599` | 052 | merged → `sepah` |
+| بانک حکمت ایرانیان | Hekmat Iranian Bank | `hekmat` | `636949` | 065 | merged → `sepah` |
+| بانک مهر اقتصاد | Mehr Eghtesad Bank | `mehr-eghtesad` | `639370` | 079 | merged → `sepah` |
+| موسسه اعتباری کوثر | Kosar Credit Institution | `kosar` | `505801` | 073 | merged → `sepah` |
+| موسسه اعتباری نور | Noor Credit Institution | `noor` | `507677` | 080 | merged → `melli` |
+
+BIN data is compiled from public, unofficial sources; please open an issue if you find a mismatch.
 
 ## Examples
 
@@ -274,3 +296,13 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 ---
 
 Made with ❤️ for the Iranian developer community
+
+
+## Migrating from 1.x
+
+2.0 is backward compatible for `detectBank`, `isValidIranianCard`, `getSupportedBanks` and `IRANIAN_BANKS`, but note the data fixes:
+
+- `603769` is **Saderat** and `603770` is **Keshavarzi** (they were swapped in 1.x).
+- `627039`, `627593` and `627884` were wrong and are removed (`627884` is Parsian).
+- `505785` is **Iran Zamin** (was labelled Iran-Venezuela).
+- Many new banks and BINs were added; duplicates were removed.

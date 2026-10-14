@@ -1,6 +1,27 @@
-export interface BankInfo {
+export type BankStatus = "active" | "merged";
+
+export interface Bank {
+  /** English slug, e.g. "melli". Also the icon file name. */
+  code: string;
+  /** Persian name */
   name: string;
+  /** English name */
+  nameEn: string;
+  /** 6-digit card prefixes */
+  bins: string[];
+  /** 3-digit bank code inside the IBAN, or null */
+  shebaCode: string | null;
+  status: BankStatus;
+  /** Code of the acquiring bank (only when status is "merged") */
+  mergedInto?: string;
+  /** Absolute path of the SVG icon, or null if there is none yet */
+  icon: string | null;
+}
+
+export interface BankInfo extends Omit<Bank, "bins"> {
+  /** The 6 digits that matched */
   bin: string;
+  /** Cleaned card number */
   cardNumber: string;
 }
 
@@ -19,19 +40,34 @@ export interface SupportedBank {
 /**
  * تشخیص بانک از روی شماره کارت
  */
-export function detectBank(cardNumber: string): DetectionResult;
+export function detectBank(cardNumber: string | number): DetectionResult;
 
 /**
  * بررسی معتبر بودن شماره کارت ایرانی
  */
-export function isValidIranianCard(cardNumber: string): boolean;
+export function isValidIranianCard(cardNumber: string | number): boolean;
 
 /**
- * دریافت لیست تمام بانک‌های پشتیبانی شده
+ * دریافت لیست BINهای پشتیبانی شده (یک ردیف برای هر BIN)
  */
 export function getSupportedBanks(): SupportedBank[];
 
 /**
- * لیست بانک‌های ایرانی
+ * دریافت لیست کامل بانک‌ها (یک ردیف برای هر بانک)
+ */
+export function getBanks(options?: { status?: BankStatus }): Bank[];
+
+/**
+ * دریافت اطلاعات یک بانک با کد آن
+ */
+export function getBankByCode(code: string): Bank | null;
+
+/**
+ * مسیر مطلق آیکون SVG بانک؛ در صورت نبودن آیکون null
+ */
+export function getBankIcon(code: string): string | null;
+
+/**
+ * نگاشت BIN به نام فارسی بانک
  */
 export const IRANIAN_BANKS: Record<string, string>;
